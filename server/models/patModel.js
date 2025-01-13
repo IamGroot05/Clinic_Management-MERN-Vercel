@@ -7,6 +7,7 @@ const patSchema = new mongoose.Schema({
     gender: { type: String, required: true },
     address:{type:String},
     amount: { type: String },
+    medicalHistory: [{type: String}],
     docConsult: [
         {
             doctor: {
@@ -14,6 +15,10 @@ const patSchema = new mongoose.Schema({
                 ref: 'Doc',
             },
             prescription: { type: String },
+            medication: {type: String},
+            dosage: {type: String},
+            duration: {type: String},
+            intravenousTherapy: {type: String},
             createdAt: { type: Date, default: Date.now }
         }
     ],

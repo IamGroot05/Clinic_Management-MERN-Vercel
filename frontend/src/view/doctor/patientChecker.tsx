@@ -19,6 +19,7 @@ function PatientChecker() {
   const [phno, setPhno] = useState("");
   const [age, setAge] = useState("");
   const [docName, setDocname] = useState("");
+  const [medicalHistory, setMedicalHis] = useState([]);
   const [patId, setPatid] = useState("");
   const [prescription, setPrescription] = useState<{ doctorName: string; prescription: string }[]>([]);
   const [enteredPres, setEnteredPres] = useState("");
@@ -52,13 +53,20 @@ function PatientChecker() {
       setPhno(data.patient.phno);
       setPrescription(data.patient.combinedData);
       setPatid(data.patient._id);
+      setMedicalHis(data.patient.medicalHistory);
       setTokenChecked(true);
       setLoader(false);
     } catch (err) {
       setLoader(false);
+      clearFetchData()
       noUser("Token Id Not Found");
     }
   };
+
+  const clearFetchData = () =>{
+    clearData();
+    setTokenChecked(false);
+  }
 
   const noUser = (value) => toast.error(value);
   const added = (value) => toast.success(value);
@@ -88,6 +96,7 @@ function PatientChecker() {
   function clearData() {
     setDocname("");
     setName("");
+    setMedicalHis([]);
     setAge("");
     setPhno("");
     setPrescription([]);
@@ -108,7 +117,7 @@ function PatientChecker() {
           </div>
         )}
         {!isLoad && (
-          <form className="flex flex-wrap gap-4 w-full" onSubmit={handleSubmit}>
+          <form className="flex flex-wrap gap-4 w-full justify-center" onSubmit={handleSubmit}>
             {/* Token Search Card */}
             <div className="bg-white shadow-lg w-full sm:w-1/2 lg:w-[30%] lg:h-[36%] p-4 rounded-lg">
               <h2 className="text-lg font-semibold text-gray-700 mb-4">Search Patient by Token</h2>
@@ -132,16 +141,16 @@ function PatientChecker() {
               <h2 className="text-lg font-semibold text-gray-700 mb-4">Patient Details</h2>
               <div className="card grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Doctor's Name</label>
-                  <Input value={docName} disabled className="mt-2 disabled:opacity-80" />
-                </div>
-                <div>
                   <label className="block text-sm font-medium text-gray-700">Patient's Name</label>
                   <Input value={name} disabled className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Age</label>
                   <Input value={age} disabled type="number" className="mt-2 disabled:opacity-80" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Medical History</label>
+                  <Input value={medicalHistory[medicalHistory.length - 1]} disabled className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Phone Number</label>
@@ -151,30 +160,70 @@ function PatientChecker() {
             </div>
 
             {/* Previous Consultations Card */}
-            <div className="bg-white shadow-lg w-full sm:w-1/2 lg:w-[33%] p-4 rounded-lg">
+            <div className="bg-white shadow-lg w-full sm:w-1/2 lg:w-[43%] p-4 rounded-lg">
               <h2 className="text-lg font-semibold text-gray-700 mb-4">Previous Consultations</h2>
               <ul className="mt-2">
-                {prescription.map((data, index) => (
-                  <li key={index} className="text-sm text-gray-600">
-                    {data.doctorName} - {data.prescription}
-                  </li>
-                ))}
+                <div className="overflow-y-auto max-h-[27rem]">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-100 rounded-sm">
+                        <th className="px-4 py-2">Medication</th>
+                        <th className="px-4 py-2">Dosage</th>
+                        <th className="px-4 py-2">Duration</th>
+                        <th className="px-4 py-2">IV</th>
+                        <th className="px-4 py-2">Prescription</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {prescription.map((data, index) => (
+                        <tr key={index} className="border-t">
+                          <td className="px-4 py-2">{data.prescription}</td>
+                          <td className="px-4 py-2">{'adbvbf'}</td>
+                          <td className="px-4 py-2">{'dhfghdsf'}</td>
+                          <td className="px-4 py-2">{'djbshgf'}</td>
+                          <td className="px-4 py-2">{'sjcbsjkd'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>  
+                  {/* // <li key={index} className="text-sm text-gray-600">
+                  //   {data.doctorName} - {data.prescription}
+                  // </li> */}
               </ul>
             </div>
 
             {/* Prescription Entry Card */}
-            <div className="bg-white shadow-lg w-full sm:w-1/2 lg:w-[60%] p-4 rounded-lg">
+            <div className="bg-white shadow-lg w-full sm:w-1/2 lg:w-[50%] p-4 rounded-lg">
               <h2 className="text-lg font-semibold text-gray-700 mb-4">Write Prescription</h2>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Prescription</label>
-                <Textarea
-                  value={enteredPres}
-                  onChange={(e) => setEnteredPres(e.target.value)}
-                  rows={6}
-                  className="mt-2"
-                  placeholder="Enter Prescription Details"
-                />
+              <div className="card grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Medication</label>
+                  <Input value={name} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Dosage</label>
+                  <Input value={age} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Duration</label>
+                  <Input value={docName} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Intravenous Therapy</label>
+                  <Input value={phno} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
+                </div>
               </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Prescription</label>
+                  <Textarea
+                    value={enteredPres}
+                    onChange={(e) => setEnteredPres(e.target.value)}
+                    rows={6}
+                    className="mt-2"
+                    placeholder="Enter Prescription Details"
+                  />
+                </div>
               <div className="mt-6">
                 <Button
                   type="submit"

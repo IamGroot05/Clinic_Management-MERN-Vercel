@@ -1,3 +1,4 @@
+const { string } = require('joi');
 const mongoose = require('mongoose');
 
 const tokSchema = new mongoose.Schema({
@@ -7,6 +8,7 @@ const tokSchema = new mongoose.Schema({
             docs: { type: mongoose.Schema.Types.ObjectId, ref: 'Doc', required: true },
             patient: { type: mongoose.Schema.Types.ObjectId, ref: 'Pats', required: true },
             checked: { type: Boolean },
+            type: { type: String },
             createdAt: { type: Date, default: Date.now }
         }
     ],

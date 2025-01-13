@@ -29,12 +29,22 @@ const createToken = async (req, res) => {
         $push: {
           tokens: {
             token: newTokenValue,
+            type: req.body.type,
+            checked: false,
             docs: new mongoose.Types.ObjectId(docData._id),
             patient: new mongoose.Types.ObjectId(patData._id),
           },
         },
       },
       { new: true, upsert: true }
+    );
+
+    await Pats.findByIdAndUpdate(
+      patData._id,
+      {
+        $push: { medicalHistory: req.body.medicalReason },
+      },
+      { new: true }
     );
 
     // Send the response after the token has been created

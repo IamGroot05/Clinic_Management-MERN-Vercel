@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 function Landing() {
-  const stats = [
-    { label: "Total", value: 46, color: "text-emerald-600" },
-    { label: "Confirmed", value: 40, color: "text-emerald-400" },
-    { label: "Pending", value: 40, color: "text-yellow-500" },
+  let stats = [
+    { label: "Total", value: 0, color: "text-emerald-600" },
+    { label: "Completed", value: 0, color: "text-emerald-400" },
+    { label: "Pending", value: 0, color: "text-yellow-500" },
     { label: "Rejected", value: 6, color: "text-red-500" },
   ];
 
@@ -26,6 +26,7 @@ function Landing() {
   const [localData, setLocalData]: any = useState({ data: initialData });
   const [data, setData] = useState([]);
   const [pat, setPat] = useState("");
+  const [states, setStates] = useState(stats);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,10 +52,29 @@ function Landing() {
           }
         );
         setData(response.data.patConsult);
-        setPat(response.data.patConsult.length);
+        setPat(response.data.patConsult?.length);
       }
     };
+    const fetchStates = async () => {
+       const res = await axios.get(
+        `${api}/api/docs/retState`,
+        {
+          params:{
+            filter:'today'
+          }
+        }
+       )
+       stats = [
+        { label: "Total", value: res.data.total, color: "text-emerald-600" },
+        { label: "Completed", value: res.data.completed, color: "text-emerald-400" },
+        { label: "Pending", value: res.data.pending, color: "text-yellow-500" },
+        { label: "Rejected", value: res.data.rejected, color: "text-red-500" },
+      ];
+      setStates(stats)
 
+    };
+    
+    fetchStates();
     fetchData();
   }, [navigate, localData,api]);
 
@@ -74,7 +94,7 @@ function Landing() {
             Appointment Overview
           </h2>
           <div className="flex justify-between">
-            {stats.map((stat, index) => (
+            {states.map((stat, index) => (
               <div key={index} className="text-center">
                 <span className={`text-2xl font-[OpenSansMedium] ${stat.color} block`}>
                   {stat.value}

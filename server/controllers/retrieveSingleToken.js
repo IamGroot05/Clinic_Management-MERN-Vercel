@@ -53,6 +53,7 @@ const retrieveSingleToken = async (req, res) => {
             name: patientDetails.name,
             age: patientDetails.age,
             phno: patientDetails.phno,
+            medicalHistory: patientDetails.medicalHistory,
             combinedData,
           },
           createdAt: results1.createdAt,
