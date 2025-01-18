@@ -8,7 +8,7 @@ const MrLanding = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-6">
-      <MedicalRepresentativeForm mrData={null} onSave={handleSave} />
+      <MedicalRepresentativeForm mrData={null} onSuccess={handleSave} />
     </div>
   );
 };

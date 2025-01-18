@@ -7,7 +7,10 @@ function UserInfo() {
 
   useEffect(() => {
     const localData = localStorage.getItem("res");
-    if (!localData) return navigate("/");
+    if (!localData) {
+      navigate("/");
+      return;
+    }
     setReceptData(JSON.parse(localData));
   }, [navigate]);
 

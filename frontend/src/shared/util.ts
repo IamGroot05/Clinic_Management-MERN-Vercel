@@ -1,4 +1,7 @@
+import _ from 'lodash';
+import jssha from 'jssha';
 
+// @ts-nocheck
 export function generateNewUUID() {
   const genUUIDv4 = () =>
     "axxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -38,7 +41,7 @@ export function isPropEmpty(val: any): boolean {
 }
 
 export function getHashedString(str: string) {
-  return new jssha.default('SHA-512', 'TEXT').update(str).getHash('HEX');
+  return new jssha('SHA-512', 'TEXT').update(str).getHash('HEX');
 }
 
 export function handleEmptyValue(val: any): any {

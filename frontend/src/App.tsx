@@ -1,7 +1,6 @@
 import './App.css'
-import { HashRouter, useLocation } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 import RouteHandler from './routes/routeHandler'
-import SideBar from './components/sideBar'
 import { useEffect, useState } from 'react'
 
 function App() {

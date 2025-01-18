@@ -23,7 +23,10 @@ function PatientAdd() {
 
   useEffect(() => {
     const localData = localStorage.getItem("res");
-    if (!localData) return navigate("/");
+    if (!localData) {
+      navigate("/");
+      return;
+    }
     const parsed = JSON.parse(localData as any);
     setDocname(parsed.data.name);
   }, [navigate]);
