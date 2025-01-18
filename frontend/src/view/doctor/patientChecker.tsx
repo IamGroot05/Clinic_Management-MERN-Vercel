@@ -8,6 +8,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+interface Prescription {
+  doctor: string; // Assuming this is a MongoDB ObjectId as a string
+  prescription: string;
+  medication: string;
+  dosage: string;
+  duration: string;
+  intravenousTherapy: string;
+  _id: string; // Assuming this is a MongoDB ObjectId as a string
+  createdAt: string; // ISO Date string
+}
+
+interface DoctorPrescription {
+  prescription: Prescription;
+  doctorName: string;
+}
+
+
 function PatientChecker() {
   const api = import.meta.env.VITE_REACT_APP_API_BASE_URL;
   const navigate = useNavigate();
@@ -21,8 +38,13 @@ function PatientChecker() {
   const [docName, setDocname] = useState("");
   const [medicalHistory, setMedicalHis] = useState([]);
   const [patId, setPatid] = useState("");
-  const [prescription, setPrescription] = useState<{ doctorName: string; prescription: string }[]>([]);
+  const [prescription, setPrescription] = useState<DoctorPrescription[]>([]);
   const [enteredPres, setEnteredPres] = useState("");
+  const [medication, setMedication] = useState("");
+  const [dosage, setDosage] = useState("");
+  const [duration, setDuration] = useState("");
+  const [ivTheraphy, setIvTheraphy] = useState("");
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +103,12 @@ function PatientChecker() {
       await axios.post(`${api}/api/docs/enqpat`, {
         patid: patId,
         id: localData.data._id,
+        tokenId: tokenValid,
         pres: enteredPres,
+        medication,
+        dosage,
+        duration,
+        ivTheraphy
       });
       setLoader(false);
       setTokenChecked(false);
@@ -149,7 +176,7 @@ function PatientChecker() {
                   <Input value={age} disabled type="number" className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Medical History</label>
+                  <label className="block text-sm font-medium text-gray-700">Medical Reason</label>
                   <Input value={medicalHistory[medicalHistory.length - 1]} disabled className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
@@ -177,11 +204,11 @@ function PatientChecker() {
                     <tbody>
                     {prescription.map((data, index) => (
                         <tr key={index} className="border-t">
-                          <td className="px-4 py-2">{data.prescription}</td>
-                          <td className="px-4 py-2">{'adbvbf'}</td>
-                          <td className="px-4 py-2">{'dhfghdsf'}</td>
-                          <td className="px-4 py-2">{'djbshgf'}</td>
-                          <td className="px-4 py-2">{'sjcbsjkd'}</td>
+                          <td className="px-4 py-2">{data.prescription.medication}</td>
+                          <td className="px-4 py-2">{data.prescription.dosage}</td>
+                          <td className="px-4 py-2">{data.prescription.duration}</td>
+                          <td className="px-4 py-2">{data.prescription.intravenousTherapy}</td>
+                          <td className="px-4 py-2">{data.prescription.prescription}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -199,19 +226,19 @@ function PatientChecker() {
               <div className="card grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Medication</label>
-                  <Input value={name} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
+                  <Input value={medication} onChange={(e) => setMedication(e.target.value)} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Dosage</label>
-                  <Input value={age} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
+                  <Input value={dosage} onChange={(e) => setDosage(e.target.value)} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Duration</label>
-                  <Input value={docName} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
+                  <Input value={duration} onChange={(e) => setDuration(e.target.value)} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Intravenous Therapy</label>
-                  <Input value={phno} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
+                  <Input value={ivTheraphy} onChange={(e) => setIvTheraphy(e.target.value)} disabled={!tokenChecked} type="number" className="mt-2 disabled:opacity-80" />
                 </div>
               </div>
                 <div>

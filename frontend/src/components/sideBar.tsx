@@ -7,9 +7,10 @@ import {
   faChevronLeft,
   faHome,
   faUserCheck,
-  faUserNurse,
   faSignOutAlt,
   faUserPlus,
+  faUserDoctor,
+  faPills,
 } from "@fortawesome/free-solid-svg-icons";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,8 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
     { name: "Dashboard", path: AppRoutesEnum.LANDING_PAGE, icon: faHome, isActive: true },
     { name: "Patient Register", path: AppRoutesEnum.ADD_PATIENT, icon: faUserPlus, isActive: false },
     { name: "Patient Checker", path: AppRoutesEnum.PATIENT_CHECKER, icon: faUserCheck, isActive: false },
-    { name: "User Info", path: AppRoutesEnum.PROFILE, icon: faUserNurse, isActive: false },
+    { name: "Manage MR", path: AppRoutesEnum.MR, icon: faPills, isActive: false },
+    { name: "User Info", path: AppRoutesEnum.PROFILE, icon: faUserDoctor, isActive: false },
   ];
 
   return (

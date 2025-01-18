@@ -22,7 +22,7 @@ const retrieveSingleToken = async (req, res) => {
           .json({ message: "Docs or Patient details not found" });
       }
       const prescriptions = patientDetails.docConsult.map(
-        (entry) => entry.prescription
+        (entry) => entry
       );
       let doctorNames = [];
       await Pats.findById(patientDetails._id)

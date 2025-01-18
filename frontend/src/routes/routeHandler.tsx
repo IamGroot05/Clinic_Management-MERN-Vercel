@@ -15,6 +15,7 @@ import SideBar from '@/components/sideBar';
 import PatientChecker from '@/view/doctor/patientChecker';
 import UserInfo from '@/view/UserInfo';
 import PatientAdd from '@/view/receptionist/AddPatient';
+import MrLanding from '@/view/MR/MrLanding';
 
 const RouteHandler = () => {
   const [user, setUser] = useState<{ role?: string } | null>(null);
@@ -67,6 +68,7 @@ const RouteHandler = () => {
           <Route path={AppRoutesEnum.PATIENT_CHECKER} element={<PatientChecker />} />
           <Route path={AppRoutesEnum.PROFILE} element={<UserInfo />} />
           <Route path={AppRoutesEnum.ADD_PATIENT} element={<PatientAdd />} />
+          <Route path={AppRoutesEnum.MR} element = {<MrLanding />}/>
           {/* <Route path="/:module/*" element={<ModuleRoutes />} /> */}
 
           {/* Catch-All Route */}

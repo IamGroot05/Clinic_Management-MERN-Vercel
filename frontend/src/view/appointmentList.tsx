@@ -35,20 +35,23 @@ const AppointmentsList = () => {
         );
         // Function to process the API response
         const processResponse = (response) => {
-          return response.tokens.flatMap((tokenGroup) =>
-            tokenGroup.tokens.map((token) => ({
-              time: new Date(token.createdAt).toLocaleTimeString([], {
+          return response.tokens.flatMap((tokenGroup) => {
+            const tokenData = tokenGroup.tokens; // Extract the tokens object
+        
+            // Map each token into the desired format
+            return {
+              time: new Date(tokenData.createdAt).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               }),
-              token: token.token.toString(),
-              name: token.patient.name,
-              type: token.type === "Follow-up" ? "Follow-up" : "Consultancy", // Example logic for type
-              status: token.checked ? "Completed" : "Pending", // Assuming status based on "checked"
-              phone: token.patient.phno.toString(),
-            }))
-          );
-        };
+              token: tokenData.token.toString(),
+              name: tokenData.patient[0]?.name || "Unknown", // Ensure the patient's name exists
+              type: tokenData.type === "Follow-up" ? "Follow-up" : "Consultancy", // Example logic for type
+              status: tokenData.checked ? "Completed" : "Pending", // Status based on "checked"
+              phone: tokenData.patient[0]?.phno?.toString() || "N/A", // Ensure the phone number exists
+            };
+          });
+        };        
     
         // Process and set formatted data
         const formatted = processResponse(response.data);
