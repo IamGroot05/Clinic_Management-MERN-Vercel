@@ -7,6 +7,7 @@ import Loader from "@/utils/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import AutoSuggest from "@/components/autoSuggest";
 
 interface Prescription {
   doctor: string; // Assuming this is a MongoDB ObjectId as a string
@@ -120,6 +121,10 @@ function PatientChecker() {
     }
   };
 
+  const handleSuggestionSelect = (suggestion) => {
+    setMedication(suggestion);
+  };
+
   function clearData() {
     setDocname("");
     setName("");
@@ -226,7 +231,19 @@ function PatientChecker() {
               <div className="card grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Medication</label>
-                  <Input value={medication} onChange={(e) => setMedication(e.target.value)} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" />
+                  <AutoSuggest
+                    apiUrl="https://jupiterapi.1mg.com/api/v4/search/autocomplete"
+                    headers={{
+                      "X-Platform": "web",
+                      "X-Access-Key": "1mg_client_access_key", // Replace with your key
+                      "X-City": "Hyderabad",
+                    }}
+                    params={{ types: "allopathy", per_page: 10 }}
+                    onSelect={handleSuggestionSelect}
+                    disable={!tokenChecked}
+                    placeholder="Start typing medicine name..."
+                  />
+                  {/* <Input value={medication} onChange={(e) => setMedication(e.target.value)} disabled={!tokenChecked} className="mt-2 disabled:opacity-80" /> */}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Dosage</label>

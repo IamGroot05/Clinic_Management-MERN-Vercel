@@ -106,7 +106,7 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
     return (
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
             <Toaster />
-            <h2 className="text-3xl font-semibold text-center mb-8">Medical Representative Form</h2>
+            <h2 className="text-3xl font-semibold text-center text-[var(--primary)] mb-8">Medical Representative Form</h2>
             <form onSubmit={handleSubmit}>
                 {/* MR Basic Information */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -257,7 +257,7 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                 <button
                                     type="button"
                                     onClick={() => addProductField(visitIndex)}
-                                    className="mt-4 p-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+                                    className="mt-4 p-2 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
                                 >
                                     <FontAwesomeIcon icon={faPlus} /> Add Product
                                 </button>
