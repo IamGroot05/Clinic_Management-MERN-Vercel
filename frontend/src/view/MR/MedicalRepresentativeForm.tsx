@@ -16,7 +16,8 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
         visits: mrData?.visits || [
             {
                 visit_date: new Date().toISOString().split('T')[0],
-                products: [{ name: '', quantity: 0, price: 0, finalPrice: 0 }],
+                discount: 0,
+                products: [{ name: '', quantity: 1, price: null, finalPrice: null }],
             },
         ],
     });
@@ -54,7 +55,7 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
 
     const addProductField = (visitIndex) => {
         const updatedVisits = [...formData.visits];
-        updatedVisits[visitIndex].products.push({ name: '', quantity: 0, price: 0, finalPrice: 0 });
+        updatedVisits[visitIndex].products.push({ name: '', quantity: 1, price: null, finalPrice: null });
         setFormData((prev) => ({
             ...prev,
             visits: updatedVisits,
@@ -69,6 +70,30 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
             visits: updatedVisits,
         }));
     };
+
+    const handleDiscountChange = (visitIndex, e) => {
+        const { value } = e.target;
+        const updatedVisits = [...formData.visits];
+        updatedVisits[visitIndex].discount = Number(value);
+
+        setFormData((prev) => ({
+            ...prev,
+            visits: updatedVisits,
+        }));
+    };
+
+    const calculateTotalPayment = (visitIndex) => {
+        const visit = formData.visits[visitIndex];
+        return visit.products.reduce((total, product) => total + product.finalPrice, 0);
+    };
+
+    const calculateGrandTotal = (visitIndex) => {
+        const visit = formData.visits[visitIndex];
+        const totalPayment = calculateTotalPayment(visitIndex);
+        const discount = (totalPayment * visit.discount) / 100;
+        return totalPayment - discount;
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -254,13 +279,31 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                         </button>
                                     </div>
                                 ))}
-                                <button
-                                    type="button"
-                                    onClick={() => addProductField(visitIndex)}
-                                    className="mt-4 p-2 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
-                                >
-                                    <FontAwesomeIcon icon={faPlus} /> Add Product
-                                </button>
+                                <div className='flex justify-between'>
+                                    <button
+                                        type="button"
+                                        onClick={() => addProductField(visitIndex)}
+                                        className="mt-4 p-2 h-12 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
+                                    >
+                                        <FontAwesomeIcon icon={faPlus} /> Add Product
+                                    </button>
+                                    <div className="mt-4">
+                                        <p className='text-[18px] font-semibold'>Total Payment :  <span>&#8377;{calculateTotalPayment(visitIndex)}</span></p>
+                                        <div className='flex gap-2'> 
+                                            <label htmlFor="discount" className="text-[18px] block text-sm font-medium text-gray-700">Discount (%) :  </label>
+                                            <input
+                                                type="number"
+                                                id="discount"
+                                                size={20}
+                                                value={visit.discount}
+                                                onChange={(e) => handleDiscountChange(visitIndex, e)}
+                                                className="text-[18px] max-w-[50px] min-w-[50px] font-medium"
+                                            />
+                                        </div>
+                                        <div className="border-t border-gray-300 my-3"></div>
+                                        <p className='text-[20px] font-semibold'>Grand Total : <span>&#8377;{calculateGrandTotal(visitIndex)}</span></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
