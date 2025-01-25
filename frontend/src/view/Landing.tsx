@@ -8,7 +8,7 @@ function Landing() {
     { label: "Total", value: 0, color: "text-emerald-600" },
     { label: "Completed", value: 0, color: "text-emerald-400" },
     { label: "Pending", value: 0, color: "text-yellow-500" },
-    { label: "Rejected", value: 6, color: "text-red-500" },
+    { label: "Rejected", value: 0, color: "text-red-500" },
   ];
 
   const api = import.meta.env.VITE_REACT_APP_API_BASE_URL;

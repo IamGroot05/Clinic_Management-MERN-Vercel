@@ -3,6 +3,17 @@ import Loader from "../../utils/Loader";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { set } from "lodash";
+
 
 function PatientAdd() {
   const api = import.meta.env.VITE_REACT_APP_API_BASE_URL;
@@ -12,6 +23,7 @@ function PatientAdd() {
   const [getNumber, setNumber] = useState("");
   const [loader, setLoader] = useState(false);
   const [getnewPatName, setNewPatName] = useState("");
+  const [getnewPatUserName, setPatUserName] = useState("");
   const [getnewPatAge, setNewPatAge] = useState("");
   const [getnewPatPhno, setNewPatPhno] = useState("");
   const [getnewPatAddr, setNewPatAddr] = useState("");
@@ -20,6 +32,13 @@ function PatientAdd() {
   const [medicalReason, setMedicalReason] = useState('');
   const [selectedGender, setSelectedGender] = useState("Female");
   const [selectedType, setSelectedType] = useState('Consultancy')
+
+  const [results, setResults] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [isUserDelete, setIsUserDelete] = useState(false);
+
+
+  let debounceTimeout;
 
   useEffect(() => {
     const localData = localStorage.getItem("res");
@@ -31,6 +50,12 @@ function PatientAdd() {
     setDocname(parsed.data.name);
   }, [navigate]);
 
+  const generateUsername = (name, number) => {
+    const numberLast = number.slice(-4);
+    const nameFirst = name.slice(0, 4);
+    return nameFirst + numberLast;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -39,6 +64,7 @@ function PatientAdd() {
         docname: getDocname,
         patNo: getNumber,
         medicalReason: medicalReason,
+        username: getnewPatUserName,
         type: selectedType
       });
       setFetchedID(fetchData.data.tokenID);
@@ -59,12 +85,52 @@ function PatientAdd() {
         gender: selectedGender,
         phno: getnewPatPhno,
         address: getnewPatAddr,
+        username: generateUsername(getnewPatName, getnewPatPhno),
       });
       toast.success("Patient Added Successfully");
     } catch (err) {
       toast.error("Failed to Add Patient");
     }
   };
+
+  const handelPatientNameChange = (e) => {
+    setPatUserName(e);
+    results.forEach((patient) => {
+      if(patient.username === e){
+        setMedicalReason(patient.medicalHistory[-1]);
+      }
+    })
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setNumber(value);
+    if(value.length < 10) return;
+    // Clear previous timeout
+    if (debounceTimeout) clearTimeout(debounceTimeout);
+
+    // Set a new timeout
+    debounceTimeout = setTimeout(() => {
+        fetchPatients(value);
+    }, 300); // Adjust debounce delay as needed
+};
+
+const fetchPatients = async (phno) => {
+    if (!phno) {
+        setResults([]);
+        return;
+    }
+
+    try {
+        const response = await axios.get(`${api}/api/recept/searchpatbyphn?phno=${phno}`);
+        setResults(response.data.patients);
+        setOpen(true);
+    } catch (error) {
+        console.error('Error fetching patients:', error);
+        toast.error(error.response.data.message ?? "Failed to Find Patient");
+        setResults([]);
+    }
+};
 
   return (
     <>
@@ -79,17 +145,40 @@ function PatientAdd() {
           </p>
           {isExist && !fetchTokId && !loader && (
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Patient's Phone Number
-                </label>
-                <input
-                  type="number"
-                  onChange={(e) => setNumber(e.target.value)}
-                  className="mt-2 block w-full px-3 py-2 border rounded-lg text-gray-700"
-                  required
-                />
+              <div className="flex justify-between w-full">
+                <div className="w-[48%]">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Patient's Phone Number
+                  </label>
+                  <input
+                    type="number"
+                    onChange={(e) => handleSearch(e)}
+                    className="mt-2 block w-full px-3 py-2 border rounded-lg text-gray-700"
+                    required
+                  />
+                </div>
+                <div className="w-[48%]">
+                  <label className="block text-sm font-medium text-gray-700">
+                      Patient Name
+                  </label>
+                  <Select open={open} onOpenChange={setOpen}  onValueChange={handelPatientNameChange} disabled={results.length < 1} required>
+                    <SelectTrigger className="mt-2 w-full h-[60%] text-base px-3 py-2 border rounded-lg text-gray-700">
+                      <SelectValue placeholder="Select a patient" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Patient's name</SelectLabel>
+                        {results.map((patient, index) => (
+                          <SelectItem key={index} value={patient.username}>
+                            {patient.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+              { !isUserDelete &&(
               <div className="flex justify-between w-full">
               <div className="w-[48%]">
                   <label className="block text-sm font-medium text-gray-700">
@@ -97,6 +186,7 @@ function PatientAdd() {
                   </label>
                   <input
                     type="text"
+                    value={medicalReason}
                     onChange={(e) => setMedicalReason(e.target.value)}
                     className="mt-2 block w-full px-3 py-2 border rounded-lg text-gray-700"
                     required
@@ -106,28 +196,62 @@ function PatientAdd() {
                   <label className="block text-sm font-medium text-gray-700">
                     Checkup Type
                   </label>
-                  <select
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="mt-2 block w-full px-3 py-2 border rounded-lg text-gray-700"
-                    value={selectedType}
-                  >
-                    <option value="Follow-up">Follow-up</option>
-                    <option value="Consultancy">Consultancy</option>
-                  </select>
+                  <Select onValueChange={(e) => setSelectedType(e)} value={selectedType} >
+                    <SelectTrigger className="mt-2 w-full h-[60%] text-base px-3 py-2 border rounded-lg text-gray-700">
+                      <SelectValue  placeholder="Select a fruit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Follow-up">Follow-up</SelectItem>
+                        <SelectItem value="Consultancy">Consultancy</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
+              )}
+              { !isUserDelete &&(
               <button
                 type="submit"
                 className="w-full py-2 bg-[var(--primary)] text-white rounded-lg hover:bg-emerald-700"
               >
                 Generate Token
               </button>
-              <p
-                onClick={() => setExist(false)}
-                className="text-center text-blue-600 mt-4 cursor-pointer"
+              )}
+              { isUserDelete &&(
+              <button
+                type="submit"
+                className="w-full py-2 mt-8 bg-[var(--primary)] text-white rounded-lg bg-red-500 hover:bg-red-500"
               >
-                Patient Not Registered?
-              </p>
+                Delete User
+              </button>
+              )}
+                
+                { !isUserDelete &&(
+                  <div className="flex justify-center items-center gap-3 w-full">
+                    <p
+                      onClick={() => setExist(false)}
+                      className="text-center text-blue-600 mt-4 cursor-pointer"
+                    >
+                      Patient Not Registered?
+                    </p>
+                    <p className="mt-4">|</p>
+                      <p
+                        onClick={() => setIsUserDelete(true)}
+                        className="text-center text-red-400 mt-4 cursor-pointer"
+                      >
+                        Delete Created Patient?
+                      </p>
+                    </div>
+                )}
+                { isUserDelete &&(
+                <p
+                  onClick={() => setIsUserDelete(false)}
+                  className="text-center text-blue-600 mt-4 cursor-pointer"
+                >
+                  Generate Token For Patient?
+                </p>
+                )}
             </form>
           )}
           {isExist && fetchTokId && (

@@ -3,10 +3,11 @@
 const { Pats } = require('../models/patModel');
 const receptRegister = async (req, res) => {
     try {
-        const patDetail = await Pats.findOne({ phno: req.body.patPh }) ? true : false;
-        if(patDetail) return res.status(422).json("Patient is already Registered");
+        const userExist = await Pats.findOne({ username: req.body.username }) ? true : false;
+        if(userExist) return res.status(422).json("Patient is already Registered");
         const newPatient = await Pats.create({
             name:req.body.name,
+            username: req.body.username,
             age:req.body.age,
             phno:req.body.phno,
             gender:req.body.gender,

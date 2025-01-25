@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const createToken = async (req, res) => {
   try {
     const docData = await Doc.findOne({ name: req.body.docname });
-    const patData = await Pats.findOne({ phno: req.body.patNo });
+    const patData = await Pats.findOne({ username: req.body.username });
     if(!docData) return res.status(404).send("Doctor Not Found");
     if(!patData) return res.status(404).send("Patient Not Found");
     const pipeline = [

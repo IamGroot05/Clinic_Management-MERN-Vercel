@@ -288,7 +288,7 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                         <FontAwesomeIcon icon={faPlus} /> Add Product
                                     </button>
                                     <div className="mt-4">
-                                        <p className='text-[18px] font-semibold'>Total Payment :  <span>&#8377;{calculateTotalPayment(visitIndex)}</span></p>
+                                        <p className='text-[1.1rem] font-semibold'>Total Payment :  <span>&#8377;{calculateTotalPayment(visitIndex)}</span></p>
                                         <div className='flex gap-2'> 
                                             <label htmlFor="discount" className="text-[18px] block text-sm font-medium text-gray-700">Discount (%) :  </label>
                                             <input
@@ -297,11 +297,11 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                                 size={20}
                                                 value={visit.discount}
                                                 onChange={(e) => handleDiscountChange(visitIndex, e)}
-                                                className="text-[18px] max-w-[50px] min-w-[50px] font-medium"
+                                                className="text-[1rem] max-w-[50px] min-w-[50px] font-medium"
                                             />
                                         </div>
                                         <div className="border-t border-gray-300 my-3"></div>
-                                        <p className='text-[20px] font-semibold'>Grand Total : <span>&#8377;{calculateGrandTotal(visitIndex)}</span></p>
+                                        <p className='text-[1.2rem] font-semibold'>Grand Total : <span>&#8377;{calculateGrandTotal(visitIndex)}</span></p>
                                     </div>
                                 </div>
                             </div>
