@@ -6,6 +6,7 @@ const { ReceptlogController } = require('../controllers/ReceptlogController');
 const { retrievePatientDetails } = require('../controllers/retrievePatientDetails');
 const { billingAmount } = require('../controllers/billingAmount');
 const { getPatList } = require('../controllers/searchPatList'); 
+const { deletePat } = require('../controllers/deletePat');
 
 const router = require('express').Router();
 
@@ -17,5 +18,6 @@ router.post("/logrecept",ReceptlogController);
 router.post("/retrpat",retrievePatientDetails);
 router.post("/bill",billingAmount);
 router.get("/searchpatbyphn",getPatList);
+router.delete("/deletepat/:username",deletePat);
 
 module.exports = router;

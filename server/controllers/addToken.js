@@ -10,6 +10,23 @@ const createToken = async (req, res) => {
     const patData = await Pats.findOne({ username: req.body.username });
     if(!docData) return res.status(404).send("Doctor Not Found");
     if(!patData) return res.status(404).send("Patient Not Found");
+
+
+    // Check if a token already exists for the same date and consultation type
+    const existingToken = await Token.findOne({
+      "tokens.type": req.body.type,
+      "tokens.docs": docData._id,
+      "tokens.patient": patData._id,
+      "tokens.createdAt": {
+        $gte: new Date().setHours(0, 0, 0, 0), // Start of the current day
+        $lt: new Date().setHours(23, 59, 59, 999), // End of the current day
+      },
+    });
+
+    if (existingToken) {
+      return res.status(404).json({ message: "Token already exists for today with the same consultation type" });
+    }
+    
     const pipeline = [
       {
         $unwind: "$tokens",

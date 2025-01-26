@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { set } from "lodash";
+import { AppRoutesEnum } from "@/shared/appRoutes";
 
 
 function PatientAdd() {
@@ -58,6 +58,16 @@ function PatientAdd() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(isUserDelete){
+      try {
+        await axios.delete(`${api}/api/recept/deletepat/${getnewPatUserName}`);
+        toast.success("Patient Deleted Successfully");
+      } catch (err) {
+        toast.error("Failed to Delete Patient");
+      }
+      return;
+    }
     try {
       setLoader(true);
       const fetchData = await axios.post(`${api}/api/recept/createtoken`, {
@@ -70,7 +80,7 @@ function PatientAdd() {
       setFetchedID(fetchData.data.tokenID);
       setFetchTokid(true);
     } catch (err) {
-      toast.error("Failed to Fetch Data");
+      toast.error(err.response.data.message ?? "Failed to Fetch Data");
     } finally {
       setLoader(false);
     }
@@ -157,12 +167,12 @@ const fetchPatients = async (phno) => {
                     required
                   />
                 </div>
-                <div className="w-[48%]">
+                <div className="w-[48%] flex flex-col justify-between">
                   <label className="block text-sm font-medium text-gray-700">
                       Patient Name
                   </label>
                   <Select open={open} onOpenChange={setOpen}  onValueChange={handelPatientNameChange} disabled={results.length < 1} required>
-                    <SelectTrigger className="mt-2 w-full h-[60%] text-base px-3 py-2 border rounded-lg text-gray-700">
+                    <SelectTrigger className="mt-2 w-full max-h-[43px] h-[60%] text-base px-3 py-2 border rounded-lg text-gray-700">
                       <SelectValue placeholder="Select a patient" />
                     </SelectTrigger>
                     <SelectContent>
@@ -240,7 +250,7 @@ const fetchPatients = async (phno) => {
                         onClick={() => setIsUserDelete(true)}
                         className="text-center text-red-400 mt-4 cursor-pointer"
                       >
-                        Delete Created Patient?
+                        Delete Patient?
                       </p>
                     </div>
                 )}
@@ -260,12 +270,20 @@ const fetchPatients = async (phno) => {
                 Your Token ID
               </h2>
               <p className="text-3xl font-bold text-blue-600">{isFetched}</p>
-              <button
-                onClick={() => setFetchTokid(false)}
-                className="mt-4 py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600"
-              >
-                Close
-              </button>
+              <div className="flex justify-center items-center gap-3 w-full">
+                <button
+                  onClick={() => navigate(`${AppRoutesEnum.PATIENT_CHECKER}?token=${isFetched}`)}
+                  className="mt-4 py-2 px-4 bg-emerald-500 text-white rounded-md hover:bg-emerald-600"
+                >
+                  Check
+                </button>
+                <button
+                  onClick={() => setFetchTokid(false)}
+                  className="mt-4 py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           )}
           {isExist && loader && <Loader />}

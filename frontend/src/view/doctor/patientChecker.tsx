@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import AutoSuggest from "@/components/autoSuggest";
+import { useSearchParams } from "react-router-dom";
 
 interface Prescription {
   doctor: string; // Assuming this is a MongoDB ObjectId as a string
@@ -46,6 +47,9 @@ function PatientChecker() {
   const [duration, setDuration] = useState("");
   const [ivTheraphy, setIvTheraphy] = useState("");
 
+  const [searchParams] = useSearchParams();
+  const tokenNum = searchParams.get("token");
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,6 +63,10 @@ function PatientChecker() {
       } catch (err) {
         noUser("Not Authenticated");
       }
+    };
+    if (tokenNum) {
+      setTokenValid(tokenNum);
+      checkToken({ preventDefault: () => {} });
     };
     fetchData();
   }, [navigate]);

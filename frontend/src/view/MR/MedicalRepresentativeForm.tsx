@@ -283,7 +283,7 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                     <button
                                         type="button"
                                         onClick={() => addProductField(visitIndex)}
-                                        className="mt-4 p-2 h-12 text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
+                                        className="mt-4 p-2 h-10 text-[14px] text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
                                     >
                                         <FontAwesomeIcon icon={faPlus} /> Add Product
                                     </button>
