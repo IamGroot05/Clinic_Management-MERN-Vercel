@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import toast, { Toaster } from "react-hot-toast";
-import { faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSave, faEdit, faTrash, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 
 const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
     const api = import.meta.env.VITE_REACT_APP_API_BASE_URL;
@@ -272,21 +272,22 @@ const MedicalRepresentativeForm = ({ mrData, onSuccess }) => {
                                         </div>
                                         <button
                                             type="button"
+                                            onClick={() => addProductField(visitIndex)}
+                                            className="p-2 text-green-600 text-[23px] flex items-center justify-center w-8 h-8"
+                                        >
+                                            <FontAwesomeIcon icon={faSquarePlus} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            disabled={productIndex == 0}
                                             onClick={() => removeProductField(visitIndex, productIndex)}
-                                            className="p-2 text-red-600 w-8 h-8"
+                                            className="p-2 text-red-600 w-8 h-8 mb-2"
                                         >
                                             <FontAwesomeIcon icon={faTrash} />
                                         </button>
                                     </div>
                                 ))}
                                 <div className='flex justify-between'>
-                                    <button
-                                        type="button"
-                                        onClick={() => addProductField(visitIndex)}
-                                        className="mt-4 p-2 h-10 text-[14px] text-white bg-emerald-600 rounded-md hover:bg-emerald-700"
-                                    >
-                                        <FontAwesomeIcon icon={faPlus} /> Add Product
-                                    </button>
                                     <div className="mt-4">
                                         <p className='text-[1.1rem] font-semibold'>Total Payment :  <span>&#8377;{calculateTotalPayment(visitIndex)}</span></p>
                                         <div className='flex gap-2'> 

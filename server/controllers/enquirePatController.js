@@ -22,7 +22,7 @@ const enquirePatController = async (req, res) => {
             doc.patConsult = [];
         }
         if(patDetail){
-            patDetail.docConsult.push({ doctor:docObjectId, prescription, medication: req.body.medication, dosage: req.body.dosage, duration: req.body.duration, intravenousTherapy: req.body.ivTheraphy });
+            patDetail.docConsult.push({ doctor:docObjectId, prescription, prescriptionData: req.body.prescriptionData, intravenousTherapy: req.body.ivTheraphy });
             await patDetail.save();
             doc.patConsult.push(patDetail.id);
         }
@@ -32,7 +32,7 @@ const enquirePatController = async (req, res) => {
             age: req.body.patAge,
             gender: req.body.patGender,
             phno: req.body.patPh,
-            docConsult: [{ doctor:docObjectId, prescription, medication: req.body.medication, dosage: req.body.dosage, duration: req.body.duration, intravenousTherapy: req.body.ivTheraphy }],
+            docConsult: [{ doctor:docObjectId, prescription, prescriptionData: req.body.prescriptionData, intravenousTherapy: req.body.ivTheraphy }],
         }).save();
         doc.patConsult.push(newPatient._id);
     }

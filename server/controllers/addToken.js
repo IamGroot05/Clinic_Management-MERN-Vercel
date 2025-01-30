@@ -12,17 +12,23 @@ const createToken = async (req, res) => {
     if(!patData) return res.status(404).send("Patient Not Found");
 
 
-    // Check if a token already exists for the same date and consultation type
+    const startOfDay = new Date();
+startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
     const existingToken = await Token.findOne({
-      "tokens.type": req.body.type,
-      "tokens.docs": docData._id,
-      "tokens.patient": patData._id,
-      "tokens.createdAt": {
-        $gte: new Date().setHours(0, 0, 0, 0), // Start of the current day
-        $lt: new Date().setHours(23, 59, 59, 999), // End of the current day
+      tokens: {
+        $elemMatch: {
+          type: req.body.type,
+          docs: docData._id,
+          patient: patData._id,
+          createdAt: { $gte: startOfDay, $lt: endOfDay },
+        },
       },
     });
-
+    console.log(existingToken);
     if (existingToken) {
       return res.status(404).json({ message: "Token already exists for today with the same consultation type" });
     }

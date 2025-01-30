@@ -9,20 +9,22 @@ const patSchema = new mongoose.Schema({
     address:{type:String},
     amount: { type: String },
     medicalHistory: [{type: String}],
-    docConsult: [
-        {
-            doctor: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Doc',
-            },
-            prescription: { type: String },
-            medication: {type: String},
-            dosage: {type: String},
-            duration: {type: String},
-            intravenousTherapy: {type: String},
-            createdAt: { type: Date, default: Date.now }
-        }
-    ],
+    docConsult: [{
+        createdAt: { type: Date, default: Date.now },
+        doctor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Doc',
+        },
+        prescription: { type: String },
+        intravenousTherapy: {type: String},
+        prescriptionData: [
+            {
+                medication: {type: String},
+                dosage: {type: String},
+                duration: {type: String},
+            }
+        ],
+    }],
 })
 
 const Pats = mongoose.model("Pats", patSchema);
