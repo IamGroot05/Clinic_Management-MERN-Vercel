@@ -11,6 +11,7 @@ import AutoSuggest from "@/components/autoSuggest";
 import { useSearchParams } from "react-router-dom";
 import { faAdd, faSquarePlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PrescriptionDialog } from "./prescriptionCard";
 
 interface Prescription {
   doctor: string; // Assuming this is a MongoDB ObjectId as a string
@@ -48,6 +49,8 @@ function PatientChecker() {
   const [enteredPres, setEnteredPres] = useState("");
   const [prescriptionData, setPrescriptionData] = useState<{ medication: string; dosage: string; duration: string; }[]>([{ medication: "", dosage: "", duration: "" }]);
   const [ivTheraphy, setIvTheraphy] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPrescription, setSelectedPrescription] = useState(null);
 
   const [searchParams] = useSearchParams();
   const tokenNum = searchParams.get("token");
@@ -108,6 +111,17 @@ function PatientChecker() {
     clearData();
     setTokenChecked(false);
   }
+
+  const openDialog = (prescription) => {
+    setSelectedPrescription(prescription);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedPrescription(null);
+  };
+
 
   const noUser = (value) => toast.error(value);
   const added = (value) => toast.success(value);
@@ -243,7 +257,7 @@ const removeProductField = (productIndex) => {
               <ul className="mt-2">
                 <div className="overflow-y-auto h-full">
                   {prescription.map((data, index) => (
-                  <div className="history-main-card bg-[#f9f9f9] cursor-pointer p-2 hover:shadow-md shadow-sm rounded-md h-20 flex items-center justify-between mx-2 mb-3">
+                  <div onClick={() => openDialog(data)} className="history-main-card bg-[#f9f9f9] cursor-pointer p-2 hover:shadow-md shadow-sm rounded-md h-20 flex items-center justify-between mx-2 mb-3">
                      <div className="card-left-info w-[80%] lg:w-[60%]">
                       <div className="flex items-center gap-4"><span className="flex items-center gap-[6px] text-gray-700 font-semibold text-[14px]">Reasone: <p className="font-medium text-black">Fever</p></span></div>
                       <div className="flex items-center gap-4 justify-between"><span className="flex items-center gap-[6px] text-gray-700 font-semibold text-[14px]">Medication: <p className="font-medium text-black">{data.prescription.prescriptionData.length ?? 0}</p></span> <span className="flex items-center gap-[6px] text-gray-700 font-semibold text-[14px]">IV: <p className="font-medium text-black">{data.prescription.intravenousTherapy == '' ? '- -' : data.prescription.intravenousTherapy}</p></span></div>
@@ -281,6 +295,11 @@ const removeProductField = (productIndex) => {
                   //   {data.doctorName} - {data.prescription}
                   // </li> */}
               </ul>
+              <PrescriptionDialog
+                isOpen={isDialogOpen}
+                onClose={closeDialog}
+                prescription={selectedPrescription}
+              />
             </div>
 
             {/* Prescription Entry Card */}
