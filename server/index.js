@@ -5,6 +5,7 @@ const cors = require('cors');
 const { connectDB } = require('./db');
 const docRoute = require("./routes/docRoute");
 const receptRoute = require("./routes/receptRoute");
+const travelScrap = require("./routes/travelScrap")
 dotenv.config();
 
 const app = express();
@@ -17,5 +18,6 @@ connectDB();
 
 app.use("/api/docs",docRoute);
 app.use("/api/recept",receptRoute);
+app.use("/api/travel",travelScrap)
 
 app.listen(3006,()=>console.log(`Running on Port 3006 `))
